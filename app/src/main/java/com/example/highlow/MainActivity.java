@@ -5,6 +5,7 @@ import androidx.core.view.animation.PathInterpolatorCompat;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Interpolator;
 import android.widget.Button;
@@ -107,5 +108,27 @@ public class MainActivity extends AppCompatActivity {
         this.lowerButton = findViewById(R.id.lowerButton);
         this.mainButton = findViewById(R.id.mainButton);
         this.currentValue = (Integer.parseInt(numberTextView.getText().toString()));
+
+        higherButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_UP){
+                    handleHigher(v);
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        lowerButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_UP){
+                    handleLower(v);
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 }
