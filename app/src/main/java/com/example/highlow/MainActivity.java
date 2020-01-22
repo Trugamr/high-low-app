@@ -3,14 +3,20 @@ package com.example.highlow;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.animation.PathInterpolatorCompat;
 
+import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Size;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Interpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import nl.dionsegijn.konfetti.KonfettiView;
+import nl.dionsegijn.konfetti.models.Shape;
 
 public class MainActivity extends AppCompatActivity {
     int limit = 30;
@@ -23,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     ImageButton lowerButton, higherButton;
     Button mainButton;
     Interpolator smoothInterpolator = PathInterpolatorCompat.create(0.605f, 0.025f, 0.310f, 0.995f);
+    KonfettiView viewKonfetti;
 
     protected int generateRandomNumber(int limit) {
         return (int) (Math.floor(Math.random() * limit) + 1);
@@ -64,6 +71,16 @@ public class MainActivity extends AppCompatActivity {
                 this.triesTookToGuess += 1;
             if(currentValue == valueToBeGuessed) {
                 headingTextView.setText("YAY! You guessed it. You took " + triesTookToGuess + " tries to guess it was number " + valueToBeGuessed + ".");
+
+                viewKonfetti.build()
+                        .addColors(Color.parseColor("#33dbff"), Color.parseColor("#1c0828"), Color.parseColor("#33ff9d"))
+                        .setDirection(0.0, 359.0)
+                        .setSpeed(0.2f, 4f)
+                        .setFadeOutEnabled(true)
+                        .setTimeToLive(2000L)
+                        .addShapes(Shape.RECT, Shape.CIRCLE)
+                        .setPosition(-50f, viewKonfetti.getWidth() + 50f, 0f, -300f)
+                        .streamFor(200, 2000);
                 this.gameStarted = false;
                 mainButton.setText("Restart Game");
                 higherButton.setAlpha(0.5f);
@@ -97,11 +114,13 @@ public class MainActivity extends AppCompatActivity {
         mainButton.setText("GUESS");
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        this.viewKonfetti = findViewById(R.id.viewKonfetti);
         this.higherButton = findViewById(R.id.higherButton);
         this.numberTextView = findViewById(R.id.numberTextView);
         this.headingTextView = findViewById(R.id.headingTextView);
@@ -109,10 +128,11 @@ public class MainActivity extends AppCompatActivity {
         this.mainButton = findViewById(R.id.mainButton);
         this.currentValue = (Integer.parseInt(numberTextView.getText().toString()));
 
+
         higherButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if(event.getAction() == MotionEvent.ACTION_UP){
+                if(event.getAction() == MotionEvent.ACTION_DOWN) {
                     handleHigher(v);
                     return true;
                 }
@@ -123,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
         lowerButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if(event.getAction() == MotionEvent.ACTION_UP){
+                if(event.getAction() == MotionEvent.ACTION_DOWN) {
                     handleLower(v);
                     return true;
                 }
